@@ -1,0 +1,31 @@
+{
+  "name": "vf-tasks-queue",
+  "version": "0.0.1",
+  "description": "Tasks queue module",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "mocha --recursive test/index.js test/unit test/integration"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VoxFeed/tasks-queue.git"
+  },
+  "keywords": [
+    "tasks",
+    "queue",
+    "rabbitmq",
+    "voxfeed"
+  ],
+  "author": "Manuel de la Torre",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/VoxFeed/tasks-queue/issues"
+  },
+  "homepage": "https://github.com/VoxFeed/tasks-queue#readme",
+  "dependencies": {
+    "amqplib": "^0.4.2",
+    "app-module-path": "^1.1.0",
+    "chai": "^3.5.0",
+    "nodeify": "^1.0.0"
+  }
+}
