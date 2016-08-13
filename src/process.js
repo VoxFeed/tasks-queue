@@ -3,7 +3,12 @@ const DEFAULT_CONCURRENCY = 1;
 const buildProcessor = (channel, processor) => {
   return (message) => {
     const taskData = parseMessage(message);
-    processor(taskData, () => channel.ack(message));
+    processor(taskData, (error) => {
+      if (error) return;
+      try {
+        channel.ack(message);
+      } catch (e) {}
+    });
   }
 };
 

@@ -1,5 +1,4 @@
 const taskQueueCreator = require('src/index');
-const deleteQueue = require('test/scripts/delete-queue');
 const taskQueueConfig = {rabbitmq: {uri: 'amqp://localhost'}};
 const TASK_TYPE = 'test-task';
 
@@ -10,17 +9,17 @@ describe('Task Queue', () => {
 
   beforeEach(done => {
     executions = 0;
-    deleteQueue(taskQueueConfig, TASK_TYPE)
-      .then(() => taskQueueCreator.create(taskQueueConfig))
+    taskQueueCreator.create(taskQueueConfig)
       .then(client => taskQueue = client)
+      .then(() => taskQueue.clearQueue(TASK_TYPE))
       .then(() => done())
       .catch(done);
   });
 
   afterEach(done => {
     taskQueue.close()
-      .then(done)
-      .catch(() => done());
+      .then(() => done())
+      .catch(done);
   });
 
   it('should send a task (using callbacks)', (done) => {
@@ -84,7 +83,7 @@ describe('Task Queue', () => {
     setTimeout(() => {
       const finished = executions === 5;
       expect(finished).to.be.equal(false);
-      setTimeout(done, 500);
+      done();
     }, 300);
   });
 
@@ -105,7 +104,7 @@ describe('Task Queue', () => {
     setTimeout(() => {
       const finished = executions === 5;
       expect(finished).to.be.equal(true);
-      setTimeout(done, 500);
+      done();
     }, 300);
   });
 });

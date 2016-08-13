@@ -1,4 +1,4 @@
-# Task Queue
+# Tasks Queue
 
 This module is an abstraction of [RabbitMQ](https://www.rabbitmq.com).
 
@@ -36,9 +36,23 @@ Takes tasks and process them.
 
 **Parameters**
 
-* *type* (String): Task type, this is used to fetch only this types of tasks.
+* *type* (String): Task type, this is used to fetch only this type of tasks.
 * *processor* (Function): A function that will process a task. This function will receive 2 parameters: `data` and `callback`. `callback` must be executed when task is done, otherwise task won't be marked as resolved and will be processed again.
 * *concurrency* (Integer): An integer that indicates the number of tasks that can be processed at the same time. Defaults to `1`.
+
+
+### tasksQueue.cleanQueue(type, [callback])
+
+Removes all unprocessed tasks of a type.
+
+**Parameters**
+
+* *type* (String): Task type, this is used to remove only this type of tasks.
+
+
+### tasksQueue.close([callback])
+
+Closes the connection with database.
 
 
 ## Example:
