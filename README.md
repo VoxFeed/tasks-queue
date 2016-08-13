@@ -4,6 +4,11 @@ This module is an abstraction of [RabbitMQ](https://www.rabbitmq.com).
 
 It supports both promises and callbacks.
 
+## Install
+
+`npm install --save vf-tasks-queue`
+
+
 ## API
 
 ### TaskQueueCreator.create(options, [callback])
@@ -69,20 +74,22 @@ module.exports = {
 *tasks_sender.js*
 ```javascript
 const config = require('config.js');
-const taskQueueCreator = require('vf-tasks-creator');
+const TasksQueueCreator = require('vf-tasks-queue');
 const taskType = 'test-task';
 const taskData = {
   name: 'Chewbacca'
 };
 
 taskQueueCreator.create(config)
-  .then(tasksQueue.send(taskType, taskData))
+  .then(tasksQueue => {
+    tasksQueue.send(taskType, taskData)
+  });
 ```
 
 *tasks_processor.js*
 ```javascript
 const config = require('config.js');
-const taskQueueCreator = require('vf-tasks-creator');
+const TasksQueueCreator = require('vf-tasks-queue');
 const taskType = 'test-task';
 
 const processor = (data, callback) => {
@@ -91,5 +98,16 @@ const processor = (data, callback) => {
 }
 
 taskQueueCreator.create(config)
-  .then(tasksQueue.process(taskType, processor, 1))
+  .then(tasksQueue => {
+    tasksQueue.process(taskType, processor, 1)
+  });
 ```
+
+## Tests
+
+`npm test`
+
+
+## License
+
+MIT
