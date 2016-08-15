@@ -18,6 +18,7 @@ Returns a task queue, ready to send and process tasks.
 **Parameters**
 
 * *options* (Object): Tasks queue configuration
+  * *prefix* (Object): Appends a string to all task types to create a namespace.
 	* *rabbitmq* (Object): Configuration to connect to RabbitMQ server.
         * *host* (String): Server host.
         * *port* (String): Server port.
@@ -65,6 +66,7 @@ Closes the connection with database.
 *config.js*
 ```javascript
 module.exports = {
+  prefix: 'queue',
   rabbitmq: {
     host: 'localhost'
   }

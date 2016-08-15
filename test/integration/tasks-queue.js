@@ -1,10 +1,11 @@
 const taskQueueCreator = require('src/index');
-const taskQueueConfig = {rabbitmq: {uri: 'amqp://localhost'}};
+const rabbitmqConfig = {host: 'localhost'};
 const TASK_TYPE = 'test-task';
 
 let executions = 0;
 
 describe('Task Queue', () => {
+  const taskQueueConfig = {rabbitmq: rabbitmqConfig};
   let taskQueue;
 
   beforeEach(done => {
@@ -106,5 +107,42 @@ describe('Task Queue', () => {
       expect(finished).to.be.equal(true);
       done();
     }, 300);
+  });
+});
+
+describe('Task Queue with prefix', () => {
+  const taskQueueConfig = {prefix: 'test', rabbitmq: rabbitmqConfig};
+  let taskQueue;
+
+  beforeEach(done => {
+    const config = 
+    executions = 0;
+    taskQueueCreator.connect(taskQueueConfig)
+      .then(client => taskQueue = client)
+      .then(() => taskQueue.clearQueue(TASK_TYPE))
+      .then(() => done())
+      .catch(done);
+  });
+
+  afterEach(done => {
+    taskQueue.close()
+      .then(() => done())
+      .catch(done);
+  });
+
+  it('should send a task and execute it', (done) => {
+    taskQueue.process(TASK_TYPE, (data, callback) => {
+      const {timeout} = data;
+      executions += 1;
+      expect(data).to.be.an('object');
+      setTimeout(callback, timeout);
+    });
+
+    taskQueue.send(TASK_TYPE, {timeout: 0});
+
+    setTimeout(() => {
+      expect(executions).to.be.equal(1);
+      done();
+    }, 100);
   });
 });

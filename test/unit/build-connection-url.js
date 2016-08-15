@@ -43,4 +43,17 @@ describe('Build Connection Url', () => {
     expect(connectionUrl).to.be.equal(EXPECTED_CONNECTION_URL);
     done();
   });
+
+  it('should override host', (done) => {
+    const EXPECTED_CONNECTION_URL = 'amqp://myuser:mypass@54.88.46.172:5672';
+    const config = {
+      host: '54.88.46.172',
+      port: 5672,
+      user: 'myuser',
+      password: 'mypass'
+    };
+    const connectionUrl = buildConnectionUrl(config);
+    expect(connectionUrl).to.be.equal(EXPECTED_CONNECTION_URL);
+    done();
+  });
 });

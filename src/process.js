@@ -1,3 +1,4 @@
+const buildTaskType = require('./build-task-type');
 const DEFAULT_CONCURRENCY = 1;
 
 const buildProcessor = (channel, processor) => {
@@ -14,13 +15,16 @@ const buildProcessor = (channel, processor) => {
 
 const parseMessage = message => JSON.parse(message.content.toString('utf-8'));
 
-module.exports = (channel) => {
+module.exports = (channel, config) => {
+  const {prefix} = config || {};
+
   return (type, processor, concurrency) => {
     const tasksAtTime = concurrency || DEFAULT_CONCURRENCY;
     const queueOptions = {durable: true};
     const consumeOptions = {noAck: false};
-    channel.assertQueue(type, queueOptions);
+    const taskType = buildTaskType(prefix, type);
+    channel.assertQueue(taskType, queueOptions);
     channel.prefetch(tasksAtTime);
-    return channel.consume(type, buildProcessor(channel, processor), consumeOptions);
+    return channel.consume(taskType, buildProcessor(channel, processor), consumeOptions);
   };
 };

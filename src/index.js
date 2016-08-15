@@ -28,9 +28,9 @@ const connect = (config) => {
     .then(createChannel)
     .then(channel => {
       return {
-        send: send(channel),
-        process: processTasks(channel),
-        clearQueue: clearQueue(channel),
+        send: send(channel, config),
+        process: processTasks(channel, config),
+        clearQueue: clearQueue(channel, config),
         close: close(connection)
       };
     });
