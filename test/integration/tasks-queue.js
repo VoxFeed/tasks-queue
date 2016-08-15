@@ -9,7 +9,7 @@ describe('Task Queue', () => {
 
   beforeEach(done => {
     executions = 0;
-    taskQueueCreator.create(taskQueueConfig)
+    taskQueueCreator.connect(taskQueueConfig)
       .then(client => taskQueue = client)
       .then(() => taskQueue.clearQueue(TASK_TYPE))
       .then(() => done())

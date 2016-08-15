@@ -2,26 +2,26 @@ const amqp = require('amqplib');
 const nodeify = require('nodeify');
 const close = require('./close');
 const send = require('./send');
-const process = require('./process');
+const processTasks = require('./process');
 const clearQueue = require('./clear-queue');
 const buildConnectionUrl = require('./build-connection-url');
 
 const createChannel = connection => connection.createConfirmChannel();
 
-const create = (config) => {
+const connect = (config) => {
   let connection;
 
   const connectionUrl = buildConnectionUrl(config.rabbitmq);
 
   const getConnection = () => {
-    return amqp.connect(connectionUrl)
-      .then(conn => {
-        connection = conn;
-        connection.on('close', () => {
-          connection = undefined;
-        });
-        return connection;
+    const connect = amqp.connect(connectionUrl);
+    return connect.then(conn => {
+      connection = conn;
+      connection.on('close', () => {
+        connection = undefined;
       });
+      return connection;
+    });
   };
 
   return getConnection()
@@ -29,7 +29,7 @@ const create = (config) => {
     .then(channel => {
       return {
         send: send(channel),
-        process: process(channel),
+        process: processTasks(channel),
         clearQueue: clearQueue(channel),
         close: close(connection)
       };
@@ -37,7 +37,7 @@ const create = (config) => {
 };
 
 const TaskQueue = {
-  create: (config, callback) => nodeify(create(config), callback)
+  connect: (config, callback) => nodeify(connect(config), callback)
 };
 
 module.exports = TaskQueue;

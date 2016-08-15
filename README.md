@@ -11,7 +11,7 @@ It supports both promises and callbacks.
 
 ## API
 
-### TaskQueueCreator.create(options, [callback])
+### TaskQueueLib.connect(options, [callback])
 
 Returns a task queue, ready to send and process tasks.
 
@@ -46,7 +46,7 @@ Takes tasks and process them.
 * *concurrency* (Integer): An integer that indicates the number of tasks that can be processed at the same time. Defaults to `1`.
 
 
-### tasksQueue.cleanQueue(type, [callback])
+### tasksQueue.clearQueue(type, [callback])
 
 Removes all unprocessed tasks of a type.
 
@@ -74,13 +74,13 @@ module.exports = {
 *tasks_sender.js*
 ```javascript
 const config = require('config.js');
-const TasksQueueCreator = require('vf-tasks-queue');
+const tasksQueueConnector = require('vf-tasks-queue');
 const taskType = 'test-task';
 const taskData = {
   name: 'Chewbacca'
 };
 
-taskQueueCreator.create(config)
+tasksQueueConnector.connect(config)
   .then(tasksQueue => {
     tasksQueue.send(taskType, taskData)
   });
@@ -89,7 +89,7 @@ taskQueueCreator.create(config)
 *tasks_processor.js*
 ```javascript
 const config = require('config.js');
-const TasksQueueCreator = require('vf-tasks-queue');
+const tasksQueueConnector = require('vf-tasks-queue');
 const taskType = 'test-task';
 
 const processor = (data, callback) => {
@@ -97,7 +97,7 @@ const processor = (data, callback) => {
   callback();
 }
 
-taskQueueCreator.create(config)
+tasksQueueConnector.connect(config)
   .then(tasksQueue => {
     tasksQueue.process(taskType, processor, 1)
   });

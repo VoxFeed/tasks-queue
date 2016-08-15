@@ -4,8 +4,8 @@ const buildProcessor = (channel, processor) => {
   return (message) => {
     const taskData = parseMessage(message);
     processor(taskData, (error) => {
-      if (error) return;
       try {
+        if (error) return channel.nack(message);
         channel.ack(message);
       } catch (e) {}
     });
@@ -21,6 +21,6 @@ module.exports = (channel) => {
     const consumeOptions = {noAck: false};
     channel.assertQueue(type, queueOptions);
     channel.prefetch(tasksAtTime);
-    channel.consume(type, buildProcessor(channel, processor), consumeOptions);
+    return channel.consume(type, buildProcessor(channel, processor), consumeOptions);
   };
 };
