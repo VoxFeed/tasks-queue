@@ -56,4 +56,28 @@ describe('Build Connection Url', () => {
     expect(connectionUrl).to.be.equal(EXPECTED_CONNECTION_URL);
     done();
   });
+
+  it('should support amqps protocol', (done) => {
+    const EXPECTED_CONNECTION_URL = 'amqps://myuser:mypass@54.88.46.172:5672';
+    const config = {
+      host: '54.88.46.172',
+      protocol: 'amqps',
+      port: 5672,
+      user: 'myuser',
+      password: 'mypass'
+    };
+    const connectionUrl = buildConnectionUrl(config);
+    expect(connectionUrl).to.be.equal(EXPECTED_CONNECTION_URL);
+    done();
+  });
+
+    it('should support path', (done) => {
+    const EXPECTED_CONNECTION_URL = 'amqp://localhost/my-queue';
+    const config = {
+      path: 'my-queue'
+    };
+    const connectionUrl = buildConnectionUrl(config);
+    expect(connectionUrl).to.be.equal(EXPECTED_CONNECTION_URL);
+    done();
+  });
 });

@@ -8,13 +8,16 @@ const buildConnectionUrl = require('./build-connection-url');
 
 const createChannel = connection => connection.createConfirmChannel();
 
+const getConnectionOptions = config => ((config || {}).rabbitmq || {}).options;
+
 const connect = (config) => {
   let connection;
 
   const connectionUrl = buildConnectionUrl(config.rabbitmq);
+  const connectionOptions = getConnectionOptions(config);
 
   const getConnection = () => {
-    const connect = amqp.connect(connectionUrl);
+    const connect = amqp.connect(connectionUrl, connectionOptions);
     return connect.then(conn => {
       connection = conn;
       connection.on('close', () => {
