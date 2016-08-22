@@ -35,11 +35,16 @@ describe('Task Queue', () => {
   });
 
   it('should send a task and execute it', (done) => {
-    taskQueue.process(TASK_TYPE, (data, callback) => {
+    const options = {
+      type: TASK_TYPE
+    };
+    taskQueue.process(options, (data) => {
       const {timeout} = data;
       executions += 1;
       expect(data).to.be.an('object');
-      setTimeout(callback, timeout);
+      return new Promise(resolve => {
+        setTimeout(resolve, timeout);
+      });
     });
 
     taskQueue.send(TASK_TYPE, {timeout: 0});
@@ -51,11 +56,16 @@ describe('Task Queue', () => {
   });
 
   it('should multiple tasks and execute them', (done) => {
-    taskQueue.process(TASK_TYPE, (data, callback) => {
+    const options = {
+      type: TASK_TYPE
+    };
+    taskQueue.process(options, (data) => {
       const {timeout} = data;
       executions += 1;
       expect(data).to.be.an('object');
-      setTimeout(callback, timeout);
+      return new Promise(resolve => {
+        setTimeout(resolve, timeout);
+      });
     });
 
     taskQueue.send(TASK_TYPE, {timeout: 0, id: 1});
@@ -68,12 +78,18 @@ describe('Task Queue', () => {
   });
 
   it('should execute processors with concurrency equal 1', (done) => {
-    taskQueue.process(TASK_TYPE, (data, callback) => {
+    const options = {
+      type: TASK_TYPE,
+      concurrency: 1
+    };
+    taskQueue.process(options, (data) => {
       const {timeout} = data;
       executions += 1;
       expect(data).to.be.an('object');
-      setTimeout(callback, timeout);
-    }, 1);
+      return new Promise(resolve => {
+        setTimeout(resolve, timeout);
+      });
+    });
 
     taskQueue.send(TASK_TYPE, {timeout: 100, id: 1});
     taskQueue.send(TASK_TYPE, {timeout: 100, id: 2});
@@ -89,12 +105,18 @@ describe('Task Queue', () => {
   });
 
   it('should execute processors with concurrency equal 5', (done) => {
-    taskQueue.process(TASK_TYPE, (data, callback) => {
+    const options = {
+      type: TASK_TYPE,
+      concurrency: 5
+    };
+    taskQueue.process(options, (data) => {
       const {timeout} = data;
       executions += 1;
       expect(data).to.be.an('object');
-      setTimeout(callback, timeout);
-    }, 5);
+      return new Promise(resolve => {
+        setTimeout(resolve, timeout);
+      });
+    });
 
     taskQueue.send(TASK_TYPE, {timeout: 100, id: 1});
     taskQueue.send(TASK_TYPE, {timeout: 100, id: 2});
@@ -115,7 +137,6 @@ describe('Task Queue with prefix', () => {
   let taskQueue;
 
   beforeEach(done => {
-    const config = 
     executions = 0;
     taskQueueCreator.connect(taskQueueConfig)
       .then(client => taskQueue = client)
@@ -131,11 +152,17 @@ describe('Task Queue with prefix', () => {
   });
 
   it('should send a task and execute it', (done) => {
-    taskQueue.process(TASK_TYPE, (data, callback) => {
+    const options = {
+      type: TASK_TYPE,
+      concurrency: 5
+    };
+    taskQueue.process(options, (data) => {
       const {timeout} = data;
       executions += 1;
       expect(data).to.be.an('object');
-      setTimeout(callback, timeout);
+      return new Promise(resolve => {
+        setTimeout(resolve, timeout);
+      });
     });
 
     taskQueue.send(TASK_TYPE, {timeout: 0});

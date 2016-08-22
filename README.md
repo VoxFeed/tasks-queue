@@ -18,8 +18,8 @@ Returns a task queue, ready to send and process tasks.
 **Parameters**
 
 * *options* (Object): Tasks queue configuration
-  * *prefix* (Object): Appends a string to all task types to create a namespace.
-	* *rabbitmq* (Object): Configuration to connect to RabbitMQ server.
+    * *prefix* (Object): Appends a string to all task types to create a namespace.
+	  * *rabbitmq* (Object): Configuration to connect to RabbitMQ server.
         * *host* (String): Server host.
         * *port* (String): Server port.
         * *user* (String): Server user.
@@ -42,9 +42,10 @@ Takes tasks and process them.
 
 **Parameters**
 
-* *type* (String): Task type, this is used to fetch only this type of tasks.
-* *processor* (Function): A function that will process a task. This function will receive 2 parameters: `data` and `callback`. `callback` must be executed when task is done, otherwise task won't be marked as resolved and will be processed again.
-* *concurrency* (Integer): An integer that indicates the number of tasks that can be processed at the same time. Defaults to `1`.
+* *options* (String): Options to start processing tasks.
+    * *type* (String): Task type, this is used to fetch only this type of tasks.
+    * *concurrency* (Integer): An integer that indicates the number of tasks that can be processed at the same time. Defaults to `1`.
+* *processor* (Function): A function that will process a task. This function will receive 1 parameter: `data`. You sould return a promise, otherwise task won't be marked as resolved and will be processed again.
 
 
 ### tasksQueue.clearQueue(type, [callback])
@@ -95,13 +96,18 @@ const tasksQueueConnector = require('vf-tasks-queue');
 const taskType = 'test-task';
 
 const processor = (data, callback) => {
-  console.log(data.name); // Prints “Chewbacca”
-  callback();
+  console.log(data.name); // Prints "Chewbacca"
+  return Promise.resolve();
 }
+
+const options = {
+  type: taskType,
+  concurrency: 1  
+};
 
 tasksQueueConnector.connect(config)
   .then(tasksQueue => {
-    tasksQueue.process(taskType, processor, 1)
+    tasksQueue.process(options, processor);
   });
 ```
 
